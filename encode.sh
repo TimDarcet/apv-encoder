@@ -35,6 +35,7 @@
  ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
  
  #The second loop : encodes the whole to respect size limit
+ #See https://trac.ffmpeg.org/wiki/Encode/H.264 for more info on two-pass encoding
  mkdir "$folder_to_encode/encoding_final_output"
  for video in $(find "$folder_to_encode" -maxdepth 1 -type f -name "*.mp4" | sort )
  do
