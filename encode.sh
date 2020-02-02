@@ -38,7 +38,7 @@
      tmp=${filename%.*}
      coef=${tmp##*_}
      re='^[0-9]+$'
-     if [[$coef =~ $re]]
+     if [[ $coef =~ $re ]]
      then
         total_coef=$(($total_coef+$coef))   
      else
@@ -69,7 +69,7 @@
          tmp=${filename%.*}
          coef=${tmp##*_}
          re='^[0-9]+$'
-         if [[$coef =~ $re]]
+         if [[ $coef =~ $re ]]
          then
              total_coef=$(($total_coef+$coef))   
          else
