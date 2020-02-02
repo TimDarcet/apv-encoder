@@ -47,7 +47,7 @@
      fi
      ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$foldername/$filename"
      printf "[%s] encodage n°1 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
-     size=$(ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$filename")
+     size=$(ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
      total_size=$(($total_size + $size))
      total_size_coeffed=$(($total_size_coeffed + $coef * $size))
  done 
