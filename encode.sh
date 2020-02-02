@@ -29,8 +29,10 @@
  total_size=0
  total_size_coeffed=0
  total_coef=0
- for video in $(find "$folder_to_encode" -maxdepth 1 -type f -name "*.mp4" | sort )
+ for video in $(find "$folder_to_encode" -maxdepth 2 -type f -name "*.mp4" | sort )
  do
+     foldername=$(basename $(dirname $video))
+     mkdir "$folder_to_encode/constant_quality_output/$foldername"
      filename=$(basename $video)
      # Read coef
      tmp=${filename%.*}
@@ -43,7 +45,7 @@
         coef=6
         total_coef=$(($total_coef+6))
      fi
-     ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$filename"
+     ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$foldername/$filename"
      printf "[%s] encodage n°1 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
      size=$(ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$filename")
      total_size=$(($total_size + $size))
@@ -57,10 +59,12 @@
  #The second loop : encodes the whole to respect size limit
  #See https://trac.ffmpeg.org/wiki/Encode/H.264 for more info on two-pass encoding
  mkdir "$folder_to_encode/encoding_final_output"
- for video in $(find "$folder_to_encode" -maxdepth 1 -type f -name "*.mp4" | sort )
+ for video in $(find "$folder_to_encode" -maxdepth 2 -type f -name "*.mp4" | sort )
  do
+     foldername=$(basename $(dirname $video))
+     mkdir "$folder_to_encode/constant_quality_output/$foldername"
      filename=$(basename "$video")
-     if [ -f "$folder_to_encode/constant_quality_output/$filename" ]; then
+     if [ -f "$folder_to_encode/constant_quality_output/$foldername/$filename" ]; then
          #read coef
          tmp=${filename%.*}
          coef=${tmp##*_}
@@ -76,7 +80,7 @@
          constant_quality_bitrate=$(ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$filename")
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
-         ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$filename"
+         ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$foldername/$filename"
          printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
      else
          echo $(printf "Erreur : fichier %s non trouve dans le dossier %s/constant_quality_output !" "$filename" "$folder_to_encode")
