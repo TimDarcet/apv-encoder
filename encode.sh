@@ -62,7 +62,7 @@
  for video in $(find "$folder_to_encode" -maxdepth 2 -type f -name "*.mp4" | sort )
  do
      foldername=$(basename $(dirname $video))
-     mkdir "$folder_to_encode/constant_quality_output/$foldername"
+     mkdir "$folder_to_encode/encoding_final_output/$foldername"
      filename=$(basename "$video")
      if [ -f "$folder_to_encode/constant_quality_output/$foldername/$filename" ]; then
          #read coef
