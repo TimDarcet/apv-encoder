@@ -44,7 +44,9 @@
      mkdir -p "$folder_to_encode/../constant_quality_output/$foldername"
      filename=$(basename $video)
      mkdir ../locks
-     ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && touch ./locks/$filename && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename > ../locks/$filename && rm -f ./locks/$filename" &
+     echo testa
+     ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && echo testb && touch ./locks/$filename && echo testc && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename > ../locks/$filename && rm -f ./locks/$filename" &
+     echo testd
      printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp) >> ../APV-Encoder.log
      sed -i '1d' ./computers_name.tmp
  done 
