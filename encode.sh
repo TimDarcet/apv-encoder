@@ -66,12 +66,12 @@
  
  #The second loop : encodes the whole to respect size limit
  #See https://trac.ffmpeg.org/wiki/Encode/H.264 for more info on two-pass encoding
- mkdir "$folder_to_encode/encoding_final_output"
+ mkdir "$folder_to_encode/../encoding_final_output"
  cp ~/computers_name ./computers_name.tmp
  for video in $(find "$folder_to_encode" -maxdepth 3 -type f -name "*.mp4" | sort )
  do
      foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
-     mkdir -p "$folder_to_encode/encoding_final_output/$foldername"
+     mkdir -p "$folder_to_encode/../encoding_final_output/$foldername"
      filename=$(basename "$video")
      if [ -f "$folder_to_encode/../constant_quality_output/$foldername/$filename" ]; then
          #read coef
@@ -88,11 +88,11 @@
          constant_quality_bitrate=$($ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          #two-pass encode
-         ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "$(dirname $(pwd))/two_pass_one_file.sh $(dirname $(pwd))/${video#../} $(dirname $(pwd))/${folder_to_encode#../}/encoding_final_output/$foldername/$filename $video_bitrate $audio_bitrate" &
-         #../two_pass_one_file.sh "$video" "$folder_to_encode/encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
+         ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "$(dirname $(pwd))/two_pass_one_file.sh $(dirname $(pwd))/${video#../} $(dirname $(pwd))/${folder_to_encode#../}/../encoding_final_output/$foldername/$filename $video_bitrate $audio_bitrate" &
+         #../two_pass_one_file.sh "$video" "$folder_to_encode/../encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
          sed -i '1d' ./computers_name.tmp
          #$ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
-         #$ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$foldername/$filename"
+         #$ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/../encoding_final_output/$foldername/$filename"
          printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
      else
          echo $(printf "Erreur : fichier %s non trouve dans le dossier %s/constant_quality_output !" "$filename" "$folder_to_encode")
