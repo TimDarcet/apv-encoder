@@ -108,7 +108,6 @@
  rm -rf "$folder_to_encode/constant_quality_output"
  cd ../
  rm -rf $temp_dir 
- rm ./computers_name.tmp
 
  #Restores filename dealing configuration
  IFS=$SAVEIFS
