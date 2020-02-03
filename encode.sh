@@ -5,9 +5,14 @@
  
  #encoding script
  #give it a folder to encode and a target size in megabytes and it does the rest
+
  #files should be named according to pattern <name>_<coef>.<extension>, where coef is an arbitrary coefficient measuring the quality of the encoded video.
  #e.g.: if one file has a coef of 1 and the other a coef of 2, the second will have a bitrate twice higher
  #the default coef is 6
+
+ #The second step (two-pass encoding) is distributed
+ #There should exist a file at ~/computers_name that contains all of the logins to the salles infos computers (e.g.: jtx@dordogne.polytechnique.fr)
+ #There should be at least as many computers as files in the APV, as there is one file distributed to each computer, and I didn't implement anything to distribute anything when there are no computers left. There are about 200 computers.
 
  #Creates a temp directory from which it makes the encoding
  #Necessary for different processes not to overlap
@@ -80,7 +85,10 @@
          constant_quality_bitrate=$(ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          #two-pass encode
-         ./two_pass_one_file.sh "$video" "$folder_to_encode/encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
+         #TODO ACTUAL PATH OF SECOND SCRIPT
+         #ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "./two_pass_one_file.sh \"$video\" \"$folder_to_encode/encoding_final_output/$foldername/$filename\" $video_bitrate $audio_bitrate" &
+         ../two_pass_one_file.sh \"$video\" \"$folder_to_encode/encoding_final_output/$foldername/$filename\" $video_bitrate $audio_bitrate
+         sed -i '1d' ./computers_name.tmp
          #ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
          #ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$foldername/$filename"
          printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
