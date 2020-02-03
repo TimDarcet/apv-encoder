@@ -8,11 +8,11 @@
 
  #files should be named according to pattern <name>_<coef>.<extension>, where coef is an arbitrary coefficient measuring the quality of the encoded video.
  #e.g.: if one file has a coef of 1 and the other a coef of 2, the second will have a bitrate twice higher
- #the default coef is 6
+ #the default coef is 6 (and that's absolutely arbitrary)
 
  #The second step (two-pass encoding) is distributed
  #There should exist a file at ~/computers_name that contains all of the logins to the salles infos computers (e.g.: jtx@dordogne.polytechnique.fr)
- #There should be at least as many computers as files in the APV, as there is one file distributed to each computer, and I didn't implement anything to distribute anything when there are no computers left. There are about 200 computers.
+ #There should be at least as many computers as files in the APV, as there is one file distributed to each computer, and I didn't implement anything to distribute anything when there are no computers left. There are about 200 computers. And fuck the respo encodage of the year the APV will have more than 200 videos, I guess.
 
  #Creates a temp directory from which it makes the encoding
  #Necessary for different processes not to overlap
@@ -34,6 +34,7 @@
 
  #The first loop : encodes with constant quality
  mkdir "$folder_to_encode/../constant_quality_output"
+ cp ~/computers_name ./computers_name.tmp
  total_size=0
  total_size_coeffed=0
  total_coef=0
@@ -41,6 +42,37 @@
  do
      foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
      mkdir -p "$folder_to_encode/../constant_quality_output/$foldername"
+     filename=$(basename $video)
+     mkdir ../locks
+     ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && touch ./locks/$filename && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename < /dev/null && rm ./locks/$filename" &
+     printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp) >> ../APV-Encoder.log
+     sed -i '1d' ./computers_name.tmp
+     size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
+     total_size=$(($total_size + $size))
+     total_size_coeffed=$(($total_size_coeffed + $coef * $size))
+ done 
+ rm ./computers_name.tmp
+
+ printf "========================================
+ [%s] encodages n°1 (qualité constante) de %s lancés.
+ ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
+ 
+ while [ "$(ls -A ../locks)" ]
+ do
+    sleep 7
+    printf "[%s] %d videos encore en traitement. Attente" $(date +%H:%M:%S) $(ls ../locks | wc -l)
+    sleep 1
+    printf "."
+    sleep 1
+    printf "."
+    sleep 1
+    printf ".\n"    
+ done
+
+#calculate the total size 
+ for video in $(find "$folder_to_encode" -maxdepth 3 -type f -name "*.mp4" | sort )
+ do
+     foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
      filename=$(basename $video)
      # Read coef
      tmp=${filename%.*}
@@ -53,17 +85,16 @@
         coef=6
         total_coef=$(($total_coef+6))
      fi
-     $ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/../constant_quality_output/$foldername/$filename" < /dev/null
-     printf "[%s] encodage n°1 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
      size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
      total_size=$(($total_size + $size))
      total_size_coeffed=$(($total_size_coeffed + $coef * $size))
- done 
- 
+ done
+
  printf "========================================
- [%s] encodage n°1 (qualité constante) de %s effectué.
+ [%s] encodages n°1 (qualité constante) de %s terminés.
  ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
  
+
  #The second loop : encodes the whole to respect size limit
  #See https://trac.ffmpeg.org/wiki/Encode/H.264 for more info on two-pass encoding
  mkdir "$folder_to_encode/../encoding_final_output"
