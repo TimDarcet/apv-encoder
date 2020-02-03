@@ -37,10 +37,10 @@
  total_size=0
  total_size_coeffed=0
  total_coef=0
- for video in $(find "$folder_to_encode" -maxdepth 2 -type f -name "*.mp4" | sort )
+ for video in $(find "$folder_to_encode" -maxdepth 3 -type f -name "*.mp4" | sort )
  do
-     foldername=$(basename $(dirname $video))
-     mkdir "$folder_to_encode/constant_quality_output/$foldername"
+     foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
+     mkdir -p "$folder_to_encode/constant_quality_output/$foldername"
      filename=$(basename $video)
      # Read coef
      tmp=${filename%.*}
@@ -68,10 +68,10 @@
  #See https://trac.ffmpeg.org/wiki/Encode/H.264 for more info on two-pass encoding
  mkdir "$folder_to_encode/encoding_final_output"
  cp ~/computers_name ./computers_name.tmp
- for video in $(find "$folder_to_encode" -maxdepth 2 -type f -name "*.mp4" | sort )
+ for video in $(find "$folder_to_encode" -maxdepth 3 -type f -name "*.mp4" | sort )
  do
-     foldername=$(basename $(dirname $video))
-     mkdir "$folder_to_encode/encoding_final_output/$foldername"
+     foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
+     mkdir -p "$folder_to_encode/encoding_final_output/$foldername"
      filename=$(basename "$video")
      if [ -f "$folder_to_encode/constant_quality_output/$foldername/$filename" ]; then
          #read coef
