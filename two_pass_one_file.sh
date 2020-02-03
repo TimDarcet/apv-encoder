@@ -3,8 +3,8 @@ if [ -z $1 -o -z $4 ]; then
     exit 1
 fi
 
-ffmpeg="~/ffmpeg-classic/ffmpeg"
-ffprobe="~/ffmpeg-classic/ffprobe"
+ffmpeg="~/ffmpeg-static/ffmpeg"
+ffprobe="~/ffmpeg-static/ffprobe"
 
 input_video=$1
 output_video=$2

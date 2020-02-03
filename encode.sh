@@ -16,8 +16,8 @@
 
  #Creates a temp directory from which it makes the encoding
  #Necessary for different processes not to overlap
- ffmpeg="~/ffmpeg-classic/ffmpeg"
- ffprobe="~/ffmpeg-classic/ffprobe"
+ ffmpeg="~/ffmpeg-static/ffmpeg"
+ ffprobe="~/ffmpeg-static/ffprobe"
  
  temp_dir=$(mktemp -t -d -p ./)
  cd $temp_dir
