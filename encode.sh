@@ -33,14 +33,14 @@
  IFS=$(echo -en "\n\b")
 
  #The first loop : encodes with constant quality
- mkdir "$folder_to_encode/constant_quality_output"
+ mkdir "$folder_to_encode/../constant_quality_output"
  total_size=0
  total_size_coeffed=0
  total_coef=0
  for video in $(find "$folder_to_encode" -maxdepth 3 -type f -name "*.mp4" | sort )
  do
      foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
-     mkdir -p "$folder_to_encode/constant_quality_output/$foldername"
+     mkdir -p "$folder_to_encode/../constant_quality_output/$foldername"
      filename=$(basename $video)
      # Read coef
      tmp=${filename%.*}
@@ -53,9 +53,9 @@
         coef=6
         total_coef=$(($total_coef+6))
      fi
-     $ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$foldername/$filename" < /dev/null
+     $ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/../constant_quality_output/$foldername/$filename" < /dev/null
      printf "[%s] encodage n°1 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
-     size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
+     size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
      total_size=$(($total_size + $size))
      total_size_coeffed=$(($total_size_coeffed + $coef * $size))
  done 
@@ -73,7 +73,7 @@
      foldername=$(basename $(dirname $(dirname $video)))/$(basename $(dirname $video))
      mkdir -p "$folder_to_encode/encoding_final_output/$foldername"
      filename=$(basename "$video")
-     if [ -f "$folder_to_encode/constant_quality_output/$foldername/$filename" ]; then
+     if [ -f "$folder_to_encode/../constant_quality_output/$foldername/$filename" ]; then
          #read coef
          tmp=${filename%.*}
          coef=${tmp##*_}
@@ -85,10 +85,9 @@
              coef=6
          fi
          #calculate bitrate
-         constant_quality_bitrate=$($ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
+         constant_quality_bitrate=$($ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          #two-pass encode
-         #TODO ACTUAL PATH OF SECOND SCRIPT
          ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "$(dirname $(pwd))/two_pass_one_file.sh $(dirname $(pwd))/${video#../} $(dirname $(pwd))/${folder_to_encode#../}/encoding_final_output/$foldername/$filename $video_bitrate $audio_bitrate" &
          #../two_pass_one_file.sh "$video" "$folder_to_encode/encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
          sed -i '1d' ./computers_name.tmp
@@ -105,7 +104,7 @@
  ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
  
  #Delete temporary files
- rm -rf "$folder_to_encode/constant_quality_output"
+ rm -rf "$folder_to_encode/../constant_quality_output"
  cd ../
  rm -rf $temp_dir 
 
