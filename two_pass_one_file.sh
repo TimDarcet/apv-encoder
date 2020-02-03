@@ -12,5 +12,6 @@ video_bitrate=$3
 audio_bitrate=$4
 
 echo $(pwd)
-$ffmpeg -i $input_video -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
-$ffmpeg -i $input_video -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$output_video"
+# < /dev/null prevents ffmpeg from reading standard input
+$ffmpeg -i $input_video -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null < /dev/null
+$ffmpeg -i $input_video -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$output_video" < /dev/null
