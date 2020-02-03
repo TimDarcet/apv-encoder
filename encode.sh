@@ -44,7 +44,7 @@
      mkdir -p "$folder_to_encode/../constant_quality_output/$foldername"
      filename=$(basename $video)
      mkdir ../locks
-     ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && touch ./locks/$filename && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename < /dev/null && rm -f ./locks/$filename" &
+     ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && touch ./locks/$filename && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename > ../locks/$filename && rm -f ./locks/$filename" &
      printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp) >> ../APV-Encoder.log
      sed -i '1d' ./computers_name.tmp
  done 
@@ -63,7 +63,9 @@
     sleep 1
     printf "."
     sleep 1
-    printf ".\n"    
+    printf "."
+    sleep 1
+    printf "\n"
  done
 
 #calculate the total size 
