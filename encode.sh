@@ -89,7 +89,7 @@
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          #two-pass encode
          #TODO ACTUAL PATH OF SECOND SCRIPT
-         ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "$(dirname $(pwd))/two_pass_one_file.sh $video $folder_to_encode/encoding_final_output/$foldername/$filename $video_bitrate $audio_bitrate" &
+         ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "$(dirname $(pwd))/two_pass_one_file.sh $(pwd)/$video $folder_to_encode/encoding_final_output/$foldername/$filename $video_bitrate $audio_bitrate" &
          #../two_pass_one_file.sh "$video" "$folder_to_encode/encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
          sed -i '1d' ./computers_name.tmp
          #$ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
