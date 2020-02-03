@@ -16,6 +16,9 @@
 
  #Creates a temp directory from which it makes the encoding
  #Necessary for different processes not to overlap
+ ffmpeg="~/ffmpeg-classic/ffmpeg"
+ ffprobe="~/ffmpeg-classic/ffprobe"
+ 
  temp_dir=$(mktemp -t -d -p ./)
  cd $temp_dir
 
@@ -50,9 +53,9 @@
         coef=6
         total_coef=$(($total_coef+6))
      fi
-     ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$foldername/$filename"
+     $ffmpeg -i "$video" -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y "$folder_to_encode/constant_quality_output/$foldername/$filename"
      printf "[%s] encodage n°1 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
-     size=$(ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
+     size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
      total_size=$(($total_size + $size))
      total_size_coeffed=$(($total_size_coeffed + $coef * $size))
  done 
@@ -82,15 +85,15 @@
              coef=6
          fi
          #calculate bitrate
-         constant_quality_bitrate=$(ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
+         constant_quality_bitrate=$($ffprobe -v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/constant_quality_output/$foldername/$filename")
          video_bitrate=$(echo "($desired_size*$constant_quality_bitrate*$coef)/$total_size_coeffed-$audio_bitrate" | bc )
          #two-pass encode
          #TODO ACTUAL PATH OF SECOND SCRIPT
          #ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "./two_pass_one_file.sh \"$video\" \"$folder_to_encode/encoding_final_output/$foldername/$filename\" $video_bitrate $audio_bitrate" &
          ../two_pass_one_file.sh "$video" "$folder_to_encode/encoding_final_output/$foldername/$filename" $video_bitrate $audio_bitrate
          sed -i '1d' ./computers_name.tmp
-         #ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
-         #ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$foldername/$filename"
+         #$ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
+         #$ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/encoding_final_output/$foldername/$filename"
          printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
      else
          echo $(printf "Erreur : fichier %s non trouve dans le dossier %s/constant_quality_output !" "$filename" "$folder_to_encode")
