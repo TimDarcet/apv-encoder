@@ -83,7 +83,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 quality=PASS_1_QUALITY,
                 outvid=(out_folder / video.name).as_posix()
             )
-        ], capture_output=True)
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     print("====================================================\n\
@@ -163,7 +163,7 @@ def encode(folder_to_encode, target_size, computers_file):
             "-of",
             "default=noprint_wrappers=1:nokey=1",
             out_1_file
-        ], capture_output=True)
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         c_bitrate = int(c_bitrate_cmd_out.stdout)
         nice_bitrate = target_size * c_bitrate / sum_sizes - AUDIO_BITRATE # TODO: coefs
         # Launch actual encoding
@@ -183,7 +183,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 v_bitrate=nice_bitrate,
                 a_bitrate=AUDIO_BITRATE
             )
-        ], capture_output=True)
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°2 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     
