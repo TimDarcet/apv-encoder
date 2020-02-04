@@ -93,6 +93,7 @@ def encode(folder_to_encode, target_size, computers_file):
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
     # Wait for encodings 1 to end
+    sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
     while n_remaining > 0:
         print("[{}] {} encodings in progress, waiting   \b\b\b"\
