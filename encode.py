@@ -61,42 +61,42 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder.mkdir(exist_ok=True)
     # logs_folder = Path.cwd() / 'logs'
     # logs_folder.mkdir(exist_ok=True)
-    for video in folder_to_encode.rglob('*.mp4'):
-        # Create parent folders
-        out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
-        out_folder.mkdir(exist_ok=True, parents=True)
-        # Get a computer
-        cmp = computers[cmpidx % len(computers)]
-        cmpidx += 1
-        # Launch actual encoding
-        cmd_output = subprocess.Popen([
-            "ssh",
-            "-oStrictHostKeyChecking=no",
-            cmp,
-            "cd {cwd} \
-            && touch {lockfile} \
-            && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
-                -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
-            && rm -f {lockfile}"\
-            .format(
-                cwd=Path.cwd().as_posix(),
-                lockfile=(Path("./locks") / cmp.split('@')[-1]).as_posix(),
-                ffmpeg=FFMPEG,
-                invid=video.as_posix(),
-                quality=PASS_1_QUALITY,
-                outvid=(out_folder / video.name).as_posix()
-            )
-        ],
-        # stdout=sys.stdout, stderr=sys.stderr)
-        # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout=subprocess.PIPE, stderr=sys.stderr)
-        print("[{}] encodage n°1 de {} lancé sur {}."\
-              .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
-    print(("====================================================\n"
-         + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"
-         + "====================================================\n")\
-           .format(datetime.datetime.now().strftime("%H:%M:%S"),
-                   folder_to_encode))
+    # for video in folder_to_encode.rglob('*.mp4'):
+    #     # Create parent folders
+    #     out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
+    #     out_folder.mkdir(exist_ok=True, parents=True)
+    #     # Get a computer
+    #     cmp = computers[cmpidx % len(computers)]
+    #     cmpidx += 1
+    #     # Launch actual encoding
+    #     cmd_output = subprocess.Popen([
+    #         "ssh",
+    #         "-oStrictHostKeyChecking=no",
+    #         cmp,
+    #         "cd {cwd} \
+    #         && touch {lockfile} \
+    #         && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
+    #             -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
+    #         && rm -f {lockfile}"\
+    #         .format(
+    #             cwd=Path.cwd().as_posix(),
+    #             lockfile=(Path("./locks") / cmp.split('@')[-1]).as_posix(),
+    #             ffmpeg=FFMPEG,
+    #             invid=video.as_posix(),
+    #             quality=PASS_1_QUALITY,
+    #             outvid=(out_folder / video.name).as_posix()
+    #         )
+    #     ],
+    #     # stdout=sys.stdout, stderr=sys.stderr)
+    #     # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #     stdout=subprocess.PIPE, stderr=sys.stderr)
+    #     print("[{}] encodage n°1 de {} lancé sur {}."\
+    #           .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
+    # print(("====================================================\n"
+    #      + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"
+    #      + "====================================================\n")\
+    #        .format(datetime.datetime.now().strftime("%H:%M:%S"),
+    #                folder_to_encode))
     # Wait for encodings 1 to end
     sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
