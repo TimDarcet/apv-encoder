@@ -6,7 +6,7 @@ import subprocess
 import datetime
 
 
-FFMEPG = "~/ffmpeg-static/ffmpeg"
+FFMPEG = "~/ffmpeg-static/ffmpeg"
 FFPROBE = "~/ffmpeg-static/ffprobe"
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
