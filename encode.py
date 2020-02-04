@@ -181,7 +181,9 @@ def encode(folder_to_encode, target_size, computers_file):
             "default=noprint_wrappers=1:nokey=1",
             out_file.as_posix()
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        sum_sizes += coef * int(cmd_out.stdout) 
+        sum_sizes += coef * int(cmd_out.stdout)
+        print("[{}] lecture de {}"\
+            .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
     
     print("[{}] Encodage n°2"\
           .format(datetime.datetime.now().strftime("%H:%M:%S"))) 
