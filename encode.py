@@ -191,10 +191,31 @@ def encode(folder_to_encode, target_size, computers_file):
                 v_bitrate=nice_bitrate,
                 a_bitrate=AUDIO_BITRATE
             )
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ], stdout=sys.stdout, stderr=sys.stderr)
         print("[{}] encodage n°2 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     
+    # Wait for encodings 2 to end
+    sleep(2)
+    n_remaining = len(list(locks_folder.glob('*')))
+    while n_remaining > 0:
+        print("[{}] {} encodings in progress, waiting   \b\b\b"\
+              .format(datetime.datetime.now().strftime("%H:%M:%S"),
+                      n_remaining),
+              end='', flush=True)
+        sleep(1)
+        print('.', end='', flush=True)
+        sleep(1)
+        print('.', end='', flush=True)
+        sleep(1)
+        print('.', end='\r', flush=True)
+        n_remaining = len(list(locks_folder.glob('*')))
+    print(("\n====================================================\n"
+         + "[{}] encodage n°2 (final) de {} terminé.\n"
+         + "====================================================\n")\
+           .format(datetime.datetime.now().strftime("%H:%M:%S"),
+                   folder_to_encode))
+
     # Clean
     locks_folder.rmdir()
 
