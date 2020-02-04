@@ -139,7 +139,7 @@ def encode(folder_to_encode, target_size, computers_file):
             "-of",
             "default=noprint_wrappers=1:nokey=1",
             out_file.as_posix()
-        ])
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         sum_sizes += coef * int(cmd_out.stdout) 
     
  
