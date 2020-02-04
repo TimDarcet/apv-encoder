@@ -67,7 +67,7 @@ def encode(folder_to_encode, target_size, computers_file):
         cmp = computers[cmpidx % len(computers)]
         cmpidx += 1
         # Launch actual encoding
-        cmd_output = subprocess.run([
+        cmd_output = subprocess.Popen([
             "ssh",
             "-oStrictHostKeyChecking=no",
             cmp,
@@ -83,8 +83,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 invid=video.as_posix(),
                 quality=PASS_1_QUALITY,
                 outvid=(out_folder / video.name).as_posix()
-            ),
-            "&"
+            )
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
@@ -171,7 +170,7 @@ def encode(folder_to_encode, target_size, computers_file):
         c_bitrate = int(c_bitrate_cmd_out.stdout)
         nice_bitrate = target_size * c_bitrate / sum_sizes - AUDIO_BITRATE # TODO: coefs
         # Launch actual encoding
-        cmd_output = subprocess.run([
+        cmd_output = subprocess.Popen([
             "ssh",
             "-oStrictHostKeyChecking=no",
             cmp,
