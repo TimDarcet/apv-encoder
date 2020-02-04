@@ -60,7 +60,8 @@ def encode(folder_to_encode, target_size, computers_file):
             cmp,
             "cd {pwd} \
             && touch {lockfile} \
-            && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
+            && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
+                -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
             && rm -f {lockfile}"\
             .format(
                 pwd=Path.pwd(),
@@ -71,7 +72,8 @@ def encode(folder_to_encode, target_size, computers_file):
                 outvid=out_folder / video.name
             )
         ])
-        print("[{}] encodage n°1 de {} lancé sur {}.".format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
+        print("[{}] encodage n°1 de {} lancé sur {}."\
+            .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
      
 
         
