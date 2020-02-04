@@ -7,9 +7,8 @@ import datetime
 from time import sleep
 
 
-FFMPEG = Path("~/ffmpeg-static/ffmpeg")
-FFPROBE = Path("~/ffmpeg-static/ffprobe").resolve()
-print(FFMPEG, FFPROBE)
+FFMPEG = Path("ffmpeg").resolve()
+FFPROBE = Path("ffprobe").resolve()
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
