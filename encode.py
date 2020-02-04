@@ -65,7 +65,7 @@ def encode(folder_to_encode, target_size, computers_file):
             && rm -f {lockfile}"\
             .format(
                 cwd=Path.cwd(),
-                lockfile="./locks"/cmp.split('@')[-1],
+                lockfile=Path("./locks") / cmp.split('@')[-1],
                 ffmpeg=FFMPEG,
                 invid=video,
                 quality=PASS_1_QUALITY,
