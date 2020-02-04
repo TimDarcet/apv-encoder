@@ -55,7 +55,7 @@ def encode(folder_to_encode, target_size, computers_file):
     computers = list(map(str.strip, computers_file.readlines()))
     cmpidx = 0
     # Make folders
-    output_1_folder = folder_to_encode.parent / 'constant_quality_ouput'
+    output_1_folder = folder_to_encode.parent / 'constant_quality_output'
     output_1_folder.mkdir(exist_ok=True)
     locks_folder = Path.cwd() / 'locks'
     locks_folder.mkdir(exist_ok=True)
