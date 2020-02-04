@@ -7,8 +7,8 @@ import datetime
 from time import sleep
 
 
-FFMPEG = "~/ffmpeg-static/ffmpeg"
-FFPROBE = "~/ffmpeg-static/ffprobe"
+FFMPEG = Path("~/ffmpeg-static/ffmpeg").resolve()
+FFPROBE = Path("~/ffmpeg-static/ffprobe").resolve()
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
@@ -87,9 +87,9 @@ def encode(folder_to_encode, target_size, computers_file):
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
-    print("====================================================\n\
-           [{}] encodages n°1 (qualité constante) de {} lancés.\n\
-           ====================================================\n"\
+    print("====================================================\n"\
+        + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"\
+        + "====================================================\n"\
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
     # Wait for encodings 1 to end
@@ -109,9 +109,9 @@ def encode(folder_to_encode, target_size, computers_file):
         print(cmd_output.stdout)
         print(cmd_output.stderr)
         n_remaining = len(list(locks_folder.glob('*')))
-    print("\n====================================================\n\
-             [{}] encodage n°1 (qualité constante) de {} terminé.\n\
-             ====================================================\n"\
+    print("\n====================================================\n"\
+          + "[{}] encodage n°1 (qualité constante) de {} terminé.\n"\
+          + "====================================================\n"\
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
 
