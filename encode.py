@@ -41,7 +41,7 @@ def encode(folder_to_encode, target_size, computers_file):
     folder_to_encode = Path(folder_to_encode).resolve()
     target_size *= 10 ** 6
     # Read computer list
-    computers = list(computers_file.readlines())
+    computers = list(map(str.strip, computers_file.readlines()))
     cmpidx = 0
     # Make folders
     output_1_folder = folder_to_encode.parent / 'constant_quality_ouput'
