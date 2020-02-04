@@ -9,6 +9,7 @@ from time import sleep
 
 FFMPEG = Path("~/ffmpeg-static/ffmpeg").resolve()
 FFPROBE = Path("~/ffmpeg-static/ffprobe").resolve()
+print(FFMPEG, FFPROBE)
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
