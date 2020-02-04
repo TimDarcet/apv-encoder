@@ -88,7 +88,8 @@ def encode(folder_to_encode, target_size, computers_file):
             )
         ],
         # stdout=sys.stdout, stderr=sys.stderr)
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout=subprocess.PIPE, stderr=sys.stderr)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     print(("====================================================\n"
@@ -100,7 +101,7 @@ def encode(folder_to_encode, target_size, computers_file):
     sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
     while n_remaining > 0:
-        print("[{}] {} encodings in progress, waiting   \b\b\b"\
+        print("[{}] {} encodings in progress, waiting     \b\b\b\b\b"\
               .format(datetime.datetime.now().strftime("%H:%M:%S"),
                       n_remaining),
               end='', flush=True)
@@ -110,6 +111,7 @@ def encode(folder_to_encode, target_size, computers_file):
         print('.', end='', flush=True)
         sleep(1)
         print('.', end='\r', flush=True)
+        sleep(1)
         # print(cmd_output.stdout.readline())
         # print(cmd_output.stderr.read())
         n_remaining = len(list(locks_folder.glob('*')))
@@ -199,7 +201,8 @@ def encode(folder_to_encode, target_size, computers_file):
             )
         ],
         # stdout=sys.stdout, stderr=sys.stderr)
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout=subprocess.PIPE, stderr=sys.stderr)
         print("[{}] encodage n°2 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     
