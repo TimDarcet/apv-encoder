@@ -162,7 +162,10 @@ def encode(folder_to_encode, target_size, computers_file):
         cmp = computers[cmpidx % len(computers)]
         cmpidx += 1
         # Read coef
-        coef = int((video.parent / '.coef').read_text().strip())
+        coefpath = video.parent / '.coef'
+        while not coefpath.is_file():
+            coefpath = coefpath.parent.parent / '.coef'
+        coef = int(coefpath.read_text().strip())
         # Calculate bitrate
         out_1_file = output_1_folder / video.relative_to(folder_to_encode)
         c_bitrate_cmd_out = subprocess.run([
