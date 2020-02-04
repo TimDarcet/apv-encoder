@@ -4,6 +4,7 @@ import click
 from pathlib import Path
 import subprocess
 import datetime
+from time import sleep
 
 
 FFMPEG = "~/ffmpeg-static/ffmpeg"
