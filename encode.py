@@ -85,7 +85,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 outvid=(out_folder / video.name).as_posix()
             ),
             "&"
-        ])
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     print("====================================================\n\
@@ -106,6 +106,8 @@ def encode(folder_to_encode, target_size, computers_file):
         print('.', end='', flush=True)
         sleep(1)
         print('.', end='\r', flush=True)
+        print(cmd_out.stdout)
+        print(cmd_out.stderr)
         n_remaining = len(list(locks_folder.glob('*')))
     print("\n====================================================\n\
              [{}] encodage n°1 (qualité constante) de {} terminé.\n\
