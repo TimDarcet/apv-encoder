@@ -164,8 +164,12 @@ def encode(folder_to_encode, target_size, computers_file):
         out_file = output_1_folder / video.relative_to(folder_to_encode)
         # Read coef
         coefpath = video.parent / '.coef'
+        i = 0
         while not coefpath.is_file():
             coefpath = coefpath.parent.parent / '.coef'
+            i += 1
+            if i > 100:
+                raise ValueError("Could not find .coef file")
         coef = int(coefpath.read_text().strip())
         # Check if the encoding 1 worked
         if (not out_file.is_file()):
