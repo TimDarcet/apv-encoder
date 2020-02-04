@@ -46,7 +46,7 @@
      filename=$(basename $video)
      computer=$(head -n1 ./computers_name.tmp)
      ssh -oStrictHostKeyChecking=no $computer "cd $(dirname $(pwd)) && touch ./locks/$computer && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y ${folder_to_encode#../}/../constant_quality_output/$foldername/$filename > ./locks/$computer && rm -f ./locks/$computer" &
-     printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp)
+     printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $computer
      sed -i '1d' ./computers_name.tmp
  done 
  rm ./computers_name.tmp
