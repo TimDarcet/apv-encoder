@@ -7,7 +7,7 @@ import datetime
 from time import sleep
 
 
-FFMPEG = Path("~/ffmpeg-static/ffmpeg").resolve()
+FFMPEG = Path("~/ffmpeg-static/ffmpeg")
 FFPROBE = Path("~/ffmpeg-static/ffprobe").resolve()
 print(FFMPEG, FFPROBE)
 PASS_1_QUALITY = 28
