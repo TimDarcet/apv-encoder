@@ -52,8 +52,8 @@
  rm ./computers_name.tmp
  sleep 5
  printf "========================================
- [%s] encodages n°1 (qualité constante) de %s lancés.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode
+[%s] encodages n°1 (qualité constante) de %s lancés.
+========================================\n" $(date +%H:%M:%S) $folder_to_encode
  
  while [ "$(ls -A ../locks)" ]
  do
@@ -124,15 +124,15 @@
          sed -i '1d' ./computers_name.tmp
          #$ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
          #$ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/../encoding_final_output/$foldername/$filename"
-         printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video
+         printf "[%s] encodage n°2 de %s lancé.\n" $(date +%H:%M:%S) $video
      else
          echo $(printf "Erreur : fichier %s non trouve dans le dossier %s/constant_quality_output !" "$filename" "$folder_to_encode")
      fi
  done 
  
  printf "========================================
- [%s] encodage n°2 (final) de %s effectué.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode
+[%s] encodages n°2 (finaux) de %s lancés.
+========================================\n" $(date +%H:%M:%S) $folder_to_encode
  
  #Delete temporary files
  rm -rf "$folder_to_encode/../constant_quality_output"
