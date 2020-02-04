@@ -85,7 +85,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 outvid=(out_folder / video.name).as_posix()
             ),
             "&"
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ])
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     print("====================================================\n\
