@@ -58,13 +58,13 @@ def encode(folder_to_encode, target_size, computers_file):
             "ssh",
             "-oStrictHostKeyChecking=no",
             cmp,
-            "cd {pwd} \
+            "cd {cwd} \
             && touch {lockfile} \
             && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
                 -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
             && rm -f {lockfile}"\
             .format(
-                pwd=Path.pwd(),
+                cwd=Path.cwd(),
                 lockfile="./locks"/cmp.split('@')[-1],
                 ffmpeg=FFMPEG,
                 invid=video,
