@@ -68,7 +68,7 @@ def encode(folder_to_encode, target_size, computers_file):
         cmpidx += 1
         # Check out file
         out_file = out_folder / video.name
-        if not out_file.is_file:
+        if not out_file.is_file():
             # Launch actual encoding
             cmd_output = subprocess.Popen([
                 "ssh",
@@ -94,8 +94,8 @@ def encode(folder_to_encode, target_size, computers_file):
             print("[{}] encodage n°1 de {} lancé sur {}."\
                 .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
         else:
-            print("[{}] Skipped  {}."\
-                .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
+            print("[{}] Skipped  {}: {} exists."\
+                .format(datetime.datetime.now().strftime("%H:%M:%S"), video, out_file))
     print(("====================================================\n"
          + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"
          + "====================================================\n")\
