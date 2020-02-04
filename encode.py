@@ -112,7 +112,42 @@ def encode(folder_to_encode, target_size, computers_file):
         sleep(1)
         print('.', end='\r', flush=True)
         sleep(1)
-        # print(cmd_output.stdout.readline())
+        # print(cmd_output.strglob('*.mp4'):
+    #     # Create parent folders
+    #     out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
+    #     out_folder.mkdir(exist_ok=True, parents=True)
+    #     # Get a computer
+    #     cmp = computers[cmpidx % len(computers)]
+    #     cmpidx += 1
+    #     # Launch actual encoding
+    #     cmd_output = subprocess.Popen([
+    #         "ssh",
+    #         "-oStrictHostKeyChecking=no",
+    #         cmp,
+    #         "cd {cwd} \
+    #         && touch {lockfile} \
+    #         && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
+    #             -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
+    #         && rm -f {lockfile}"\
+    #         .format(
+    #             cwd=Path.cwd().as_posix(),
+    #             lockfile=(Path("./locks") / cmp.split('@')[-1]).as_posix(),
+    #             ffmpeg=FFMPEG,
+    #             invid=video.as_posix(),
+    #             quality=PASS_1_QUALITY,
+    #             outvid=(out_folder / video.name).as_posix()
+    #         )
+    #     ],
+    #     # stdout=sys.stdout, stderr=sys.stderr)
+    #     # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #     stdout=subprocess.PIPE, stderr=sys.stderr)
+    #     print("[{}] encodage n°1 de {} lancé sur {}."\
+    #           .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
+    # print(("====================================================\n"
+    #      + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"
+    #      + "====================================================\n")\
+    #        .format(datetime.datetime.now().strftime("%H:%M:%S"),
+    #                folder_to_encoddout.readline())
         # print(cmd_output.stderr.read())
         n_remaining = len(list(locks_folder.glob('*')))
     print(("\n====================================================\n"
@@ -121,7 +156,8 @@ def encode(folder_to_encode, target_size, computers_file):
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
 
-
+    print("[{}] Lecture des tailles de fichiers"\
+          .format(datetime.datetime.now().strftime("%H:%M:%S")))
     ##### Read encoding 1 sizes #####
     sum_sizes = 0
     for video in folder_to_encode.rglob('*.mp4'):
@@ -147,7 +183,8 @@ def encode(folder_to_encode, target_size, computers_file):
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         sum_sizes += coef * int(cmd_out.stdout) 
     
- 
+    print("[{}] Encodage n°2"\
+          .format(datetime.datetime.now().strftime("%H:%M:%S"))) 
     ##### Do encoding 2 (two-pass actual encoding) #####
     # Make folders
     output_2_folder = folder_to_encode.parent / 'encoding_final_output'
