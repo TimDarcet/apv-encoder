@@ -61,7 +61,7 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
-        out_folder = output_1_folder / video.relative_to(folder_to_encode)
+        out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
         out_folder.mkdir(exist_ok=True, parents=True)
         # Get a computer
         cmp = computers[cmpidx % len(computers)]
