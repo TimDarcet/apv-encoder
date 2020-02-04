@@ -61,7 +61,7 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
-        out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
+        out_folder = output_1_folder / video.relative_to(folder_to_encode)
         out_folder.mkdir(exist_ok=True, parents=True)
         # Get a computer
         cmp = computers[cmpidx % len(computers)]
@@ -93,6 +93,9 @@ def encode(folder_to_encode, target_size, computers_file):
             stdout=subprocess.PIPE, stderr=sys.stderr)
             print("[{}] encodage n°1 de {} lancé sur {}."\
                 .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
+        else:
+            print("[{}] Skipped  {}."\
+                .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
     print(("====================================================\n"
          + "[{}] encodages n°1 (qualité constante) de {} lancés.\n"
          + "====================================================\n")\
@@ -138,7 +141,7 @@ def encode(folder_to_encode, target_size, computers_file):
         # Check if the encoding 1 worked
         if (not out_file.is_file()):
             raise ValueError("Could not find output of first encoding for {}"\
-                             .format(out_file))
+                             .format(video))
         cmd_out = subprocess.run([
             FFPROBE,
             "-v",
