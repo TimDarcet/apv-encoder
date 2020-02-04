@@ -85,6 +85,7 @@
         coef=6
         total_coef=$(($total_coef+6))
      fi
+     # Read size
      size=$($ffprobe -v error -show_entries format=size -of default=noprint_wrappers=1:nokey=1 "$folder_to_encode/../constant_quality_output/$foldername/$filename")
      total_size=$(($total_size + $size))
      total_size_coeffed=$(($total_size_coeffed + $coef * $size))
