@@ -83,7 +83,8 @@ def encode(folder_to_encode, target_size, computers_file):
                 invid=video.as_posix(),
                 quality=PASS_1_QUALITY,
                 outvid=(out_folder / video.name).as_posix()
-            )
+            ),
+            "&"
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
@@ -120,7 +121,7 @@ def encode(folder_to_encode, target_size, computers_file):
         # Read coef
         coef = int((video.parent / '.coef').read_text().strip())
         # Check if the encoding 1 worked
-        if (not out_file.isfile()):
+        if (not out_file.is_file()):
             raise ValueError("Could not find output of first encoding for {}"\
                              .format(out_file))
         cmd_out = subprocess.run([
@@ -142,7 +143,7 @@ def encode(folder_to_encode, target_size, computers_file):
     output_2_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Check if the encoding 1 worked
-        if (not out_file.isfile()):
+        if (not out_file.is_file()):
             raise ValueError("Could not find output of first encoding for {}"\
                              .format(out_file))
         # Create parent folders
