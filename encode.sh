@@ -51,7 +51,7 @@
      sed -i '1d' ./computers_name.tmp
  done 
  rm ./computers_name.tmp
-
+ sleep 5
  printf "========================================
  [%s] encodages n°1 (qualité constante) de %s lancés.
  ========================================\n" $(date +%H:%M:%S) $folder_to_encode
@@ -92,8 +92,8 @@
  done
 
  printf "========================================
- [%s] encodages n°1 (qualité constante) de %s terminés.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode 
+[%s] encodages n°1 (qualité constante) de %s terminés.
+========================================\n" $(date +%H:%M:%S) $folder_to_encode 
  
 
  #The second loop : encodes the whole to respect size limit
