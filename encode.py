@@ -87,8 +87,8 @@ def encode(folder_to_encode, target_size, computers_file):
                 outvid=(out_folder / video.name).as_posix()
             )
         ],
-        stdout=sys.stdout, stderr=sys.stderr)
-        # stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # stdout=sys.stdout, stderr=sys.stderr)
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°1 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     print(("====================================================\n"
@@ -194,7 +194,9 @@ def encode(folder_to_encode, target_size, computers_file):
                 v_bitrate=nice_bitrate,
                 a_bitrate=AUDIO_BITRATE
             )
-        ], stdout=sys.stdout, stderr=sys.stderr)
+        ],
+        # stdout=sys.stdout, stderr=sys.stderr)
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("[{}] encodage n°2 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
     
