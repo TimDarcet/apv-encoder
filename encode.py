@@ -13,9 +13,54 @@ FFPROBE = Path("ffprobe").resolve()
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
-
-def firstpass(folder_to_encode, target_size, computers_name, output_1_folder, computers):
+@click.command()
+@click.option(
+    '-f',
+    "--folder-to-encode",
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True
+    ),
+    required=True,
+    help="Path to folder to be encoded using ffmpeg"
+)
+@click.option(
+    '-s',
+    "--target-size",
+    type=int,
+    required=True,
+    help="Target size of the encoded folder, in MB"
+)
+@click.option(
+    '-c',
+    "--computers-file",
+    type=click.File(),
+    default="~/computers_name",
+    help="A file containing the ssh connection addresses of the other computers to distribute on"
+)
+def encode(folder_to_encode, target_size, computers_file):
+    """
+    Encodes the folder down to the target size
+    Distributes the calculation to computers through ssh
+    In order to be encoded using a coefficient, \
+        files should be placed in folders containing a file named '.coef' and \
+        containing a single integer.
+    There should be programs (or links to ones) named ffmpeg and ffprobe in the cwd.
+    """
     ##### Encoding number 1 #####
+    folder_to_encode = Path(folder_to_encode).resolve()
+    target_size *= 10 ** 6
+    # Read computer list
+    computers = list(map(str.strip, computers_file.readlines()))
+    cmpidx = 0
+    # Make folders
+    output_1_folder = folder_to_encode.parent / 'constant_quality_output'
+    output_1_folder.mkdir(exist_ok=True)
+    locks_folder = Path.cwd() / 'locks'
+    locks_folder.mkdir(exist_ok=True)
+    # logs_folder = Path.cwd() / 'logs'
+    # logs_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
         out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
@@ -52,81 +97,6 @@ def firstpass(folder_to_encode, target_size, computers_name, output_1_folder, co
          + "====================================================\n")\
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
-
-def get_total_size(folder_to_encode, output_1_folder):
-    sum_sizes = 0
-    for video in folder_to_encode.rglob('*.mp4'):
-        out_file = output_1_folder / video.relative_to(folder_to_encode)
-        # Read coef
-        coefpath = video.parent / '.coef'
-        while not coefpath.is_file():
-            coefpath = coefpath.parent.parent / '.coef'
-        coef = int(coefpath.read_text().strip())
-        # Check if the encoding 1 worked
-        if (not out_file.is_file()):
-            raise ValueError("Could not find output of first encoding for {}"\
-                             .format(out_file))
-        cmd_out = subprocess.run([
-            FFPROBE,
-            "-v",
-            "error",
-            "-show_entries",
-            "format=size",
-            "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            out_file.as_posix()
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        sum_sizes += coef * int(cmd_out.stdout)
-
-@click.command()
-@click.option(
-    '-f',
-    "--folder-to-encode",
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True
-    ),
-    required=True,
-    help="Path to folder to be encoded using ffmpeg"
-)
-@click.option(
-    '-s',
-    "--target-size",
-    type=int,
-    required=True,
-    help="Target size of the encoded folder, in MB"
-)
-@click.option(
-    '-c',
-    "--computers-file",
-    type=click.File(),
-    default="~/computers_name",
-    help="A file containing the ssh connection addresses of the other computers to distribute on"
-)
-def encode(folder_to_encode, target_size, computers_file):
-    """
-    Encodes the folder down to the target size
-    Distributes the calculation to computers through ssh
-    In order to be encoded using a coefficient, \
-        files should be placed in folders containing a file named '.coef' and \
-        containing a single integer.
-    There should be programs (or links to ones) named ffmpeg and ffprobe in the cwd.
-    """
-    folder_to_encode = Path(folder_to_encode).resolve()
-    target_size *= 10 ** 6
-    # Read computer list
-    computers = list(map(str.strip, computers_file.readlines()))
-    cmpidx = 0
-    # Make folders
-    output_1_folder = folder_to_encode.parent / 'constant_quality_output'
-    output_1_folder.mkdir(exist_ok=True)
-    output_2_folder = folder_to_encode.parent / 'encoding_final_output'
-    output_2_folder.mkdir(exist_ok=True)
-    locks_folder = Path.cwd() / 'locks'
-    locks_folder.mkdir(exist_ok=True)
-    # Do encoding 1
-    firstpass(folder_to_encode, target_size, computers_file, output_1_folder, computers)
     # Wait for encodings 1 to end
     sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
@@ -151,13 +121,39 @@ def encode(folder_to_encode, target_size, computers_file):
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
 
+
     ##### Read encoding 1 sizes #####
-    get_total_size(folder_to_encode, output_1_folder)
+    sum_sizes = 0
+    for video in folder_to_encode.rglob('*.mp4'):
+        out_file = output_1_folder / video.relative_to(folder_to_encode)
+        # Read coef
+        coefpath = video.parent / '.coef'
+        while not coefpath.is_file():
+            coefpath = coefpath.parent.parent / '.coef'
+        coef = int(coefpath.read_text().strip())
+        # Check if the encoding 1 worked
+        if (not out_file.is_file()):
+            raise ValueError("Could not find output of first encoding for {}"\
+                             .format(out_file))
+        cmd_out = subprocess.run([
+            FFPROBE,
+            "-v",
+            "error",
+            "-show_entries",
+            "format=size",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            out_file.as_posix()
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sum_sizes += coef * int(cmd_out.stdout) 
     
+ 
     ##### Do encoding 2 (two-pass actual encoding) #####
+    # Make folders
+    output_2_folder = folder_to_encode.parent / 'encoding_final_output'
+    output_2_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Check if the encoding 1 worked
-        out_file = output_1_folder / video.relative_to(folder_to_encode)
         if (not out_file.is_file()):
             raise ValueError("Could not find output of first encoding for {}"\
                              .format(out_file))
