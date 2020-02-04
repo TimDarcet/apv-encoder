@@ -47,14 +47,14 @@
      echo testa
      ssh -oStrictHostKeyChecking=no $(head -n1 ./computers_name.tmp) "cd $(dirname $(pwd)) && echo testb && touch ./locks/$filename && echo testc && $ffmpeg -i $(dirname $(pwd))/${video#../} -c:v libx264 -preset medium -crf $video_quality_factor -pix_fmt yuv420p -threads 0 -c:a copy -y $folder_to_encode/../constant_quality_output/$foldername/$filename > ../locks/$filename && rm -f ./locks/$filename" &
      echo testd
-     printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp) >> ../APV-Encoder.log
+     printf "[%s] encodage n°1 de %s lancé sur %s.\n" $(date +%H:%M:%S) $video $(head -n1 ./computers_name.tmp)
      sed -i '1d' ./computers_name.tmp
  done 
  rm ./computers_name.tmp
 
  printf "========================================
  [%s] encodages n°1 (qualité constante) de %s lancés.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
+ ========================================\n" $(date +%H:%M:%S) $folder_to_encode
  
  while [ "$(ls -A ../locks)" ]
  do
@@ -93,7 +93,7 @@
 
  printf "========================================
  [%s] encodages n°1 (qualité constante) de %s terminés.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
+ ========================================\n" $(date +%H:%M:%S) $folder_to_encode 
  
 
  #The second loop : encodes the whole to respect size limit
@@ -125,7 +125,7 @@
          sed -i '1d' ./computers_name.tmp
          #$ffmpeg -i "$video" -codec:v libx264 -profile:v high -preset veryslow -b:v $video_bitrate -threads 0 -pass 1 -an -f mp4 -y /dev/null
          #$ffmpeg -i "$video" -strict -2 -c:v libx264 -preset veryslow -b:v $video_bitrate -threads 0 -pass 2 -c:a aac -b:a $audio_bitrate -y "$folder_to_encode/../encoding_final_output/$foldername/$filename"
-         printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video >> ../APV-Encoder.log
+         printf "[%s] encodage n°2 de %s effectué.\n" $(date +%H:%M:%S) $video
      else
          echo $(printf "Erreur : fichier %s non trouve dans le dossier %s/constant_quality_output !" "$filename" "$folder_to_encode")
      fi
@@ -133,7 +133,7 @@
  
  printf "========================================
  [%s] encodage n°2 (final) de %s effectué.
- ========================================\n" $(date +%H:%M:%S) $folder_to_encode >> ../APV-Encoder.log 
+ ========================================\n" $(date +%H:%M:%S) $folder_to_encode
  
  #Delete temporary files
  rm -rf "$folder_to_encode/../constant_quality_output"
