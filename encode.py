@@ -14,7 +14,7 @@ PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
 
-def firstpass(folder_to_encode, target_size, computers_name, output_1_folder):
+def firstpass(folder_to_encode, target_size, computers_name, output_1_folder, computers):
     ##### Encoding number 1 #####
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
@@ -126,7 +126,7 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder = Path.cwd() / 'locks'
     locks_folder.mkdir(exist_ok=True)
     # Do encoding 1
-    firstpass(folder_to_encode, target_size, computers_file, output_1_folder)
+    firstpass(folder_to_encode, target_size, computers_file, output_1_folder, computers)
     # Wait for encodings 1 to end
     sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
