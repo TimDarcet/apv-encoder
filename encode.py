@@ -106,8 +106,8 @@ def encode(folder_to_encode, target_size, computers_file):
         print('.', end='', flush=True)
         sleep(1)
         print('.', end='\r', flush=True)
-        print(cmd_out.stdout)
-        print(cmd_out.stderr)
+        print(cmd_output.stdout)
+        print(cmd_output.stderr)
         n_remaining = len(list(locks_folder.glob('*')))
     print("\n====================================================\n\
              [{}] encodage n°1 (qualité constante) de {} terminé.\n\
