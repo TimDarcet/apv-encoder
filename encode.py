@@ -163,8 +163,9 @@ def encode(folder_to_encode, target_size, computers_file):
     output_2_folder = folder_to_encode.parent / 'encoding_final_output'
     output_2_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
+        out_1_file = output_1_folder / video.relative_to(folder_to_encode)
         # Check if the encoding 1 worked
-        if (not out_file.is_file()):
+        if (not out_1_file.is_file()):
             raise ValueError("Could not find output of first encoding for {}"\
                              .format(out_file))
         # Create parent folders
@@ -179,7 +180,6 @@ def encode(folder_to_encode, target_size, computers_file):
             coefpath = coefpath.parent.parent / '.coef'
         coef = int(coefpath.read_text().strip())
         # Calculate bitrate
-        out_1_file = output_1_folder / video.relative_to(folder_to_encode)
         c_bitrate_cmd_out = subprocess.run([
             FFPROBE,
             "-v",
@@ -191,7 +191,7 @@ def encode(folder_to_encode, target_size, computers_file):
             out_1_file
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         c_bitrate = int(c_bitrate_cmd_out.stdout)
-        nice_bitrate = target_size * c_bitrate / sum_sizes - AUDIO_BITRATE # TODO: coefs
+        nice_bitrate = target_size * c_bitrate / sum_sizes - AUDIO_BITRATE
         # Launch actual encoding
         cmd_output = subprocess.Popen([
             "ssh",
