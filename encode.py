@@ -123,9 +123,10 @@ def encode(folder_to_encode, target_size, computers_file):
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
 
+
+    ##### Read encoding 1 sizes #####
     print("[{}] Lecture des tailles de fichiers"\
           .format(datetime.datetime.now().strftime("%H:%M:%S")))
-    ##### Read encoding 1 sizes #####
     sum_sizes = 0
     for video in folder_to_encode.rglob('*.mp4'):
         out_file = output_1_folder / video.relative_to(folder_to_encode)
@@ -136,12 +137,13 @@ def encode(folder_to_encode, target_size, computers_file):
             coefpath = coefpath.parent.parent / '.coef'
             i += 1
             if i > 100:
-                raise ValueError("Could not find .coef file")
+                raise FileNotFoundError("Could not find .coef file for {}."\
+                    .format(video))
         coef = int(coefpath.read_text().strip())
         # Check if the encoding 1 worked
         if (not out_file.is_file()):
-            raise ValueError("Could not find output of first encoding for {}"\
-                             .format(video))
+            raise FileNotFoundError("Could not find output of first encoding for {}. Path searched: {}"\
+                             .format(video, out_file))
         cmd_out = subprocess.run([
             FFPROBE,
             "-v",
