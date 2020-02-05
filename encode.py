@@ -76,8 +76,8 @@ def encode(folder_to_encode, target_size, computers_file):
                 cmp,
                 "cd {cwd} \
                 && touch {lockfile} \
-                && {ffmpeg} -i {invid} -c:v libx264 -preset medium -crf {quality} \
-                    -pix_fmt yuv420p -threads 0 -c:a copy -y {outvid} \
+                && {ffmpeg} -i \"{invid}\" -c:v libx264 -preset medium -crf {quality} \
+                    -pix_fmt yuv420p -threads 0 -c:a copy -y \"{outvid}\" \
                 && rm -f {lockfile}"\
                 .format(
                     cwd=Path.cwd().as_posix(),
@@ -199,7 +199,7 @@ def encode(folder_to_encode, target_size, computers_file):
             cmp,
             "cd {cwd} \
             && touch {lockfile} \
-            && ./two_pass_one_file.sh {invid} {outvid} {v_bitrate} {a_bitrate}\
+            && ./two_pass_one_file.sh \"{invid}\" \"{outvid}\" {v_bitrate} {a_bitrate}\
             && rm -f {lockfile}"\
             .format(
                 cwd=Path.cwd().as_posix(),
