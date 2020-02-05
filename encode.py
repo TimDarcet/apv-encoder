@@ -61,7 +61,8 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
-        out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
+        out_folder = output_1_folde
+lr / video.parent.relative_to(folder_to_encode)
         out_folder.mkdir(exist_ok=True, parents=True)
         # Get a computer
         cmp = computers[cmpidx % len(computers)]
@@ -128,7 +129,9 @@ def encode(folder_to_encode, target_size, computers_file):
     print("[{}] Lecture des tailles de fichiers"\
           .format(datetime.datetime.now().strftime("%H:%M:%S")))
     sum_sizes = 0
-    for video in folder_to_encode.rglob('*.mp4'):
+    for video in sorted(folder_to_encode.rglob('*.mp4')):
+        print("[{}] lecture de {}"\
+            .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
         out_file = output_1_folder / video.relative_to(folder_to_encode)
         # Read coef
         coefpath = video.parent / '.coef'
@@ -155,8 +158,6 @@ def encode(folder_to_encode, target_size, computers_file):
             out_file.as_posix()
         ], stdout=subprocess.PIPE, stderr=sys.stderr)
         sum_sizes += coef * int(cmd_out.stdout)
-        print("[{}] lecture de {}"\
-            .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
     
     print("[{}] Encodage n°2"\
           .format(datetime.datetime.now().strftime("%H:%M:%S"))) 
@@ -234,7 +235,7 @@ def encode(folder_to_encode, target_size, computers_file):
         print('.', end='\r', flush=True)
         n_remaining = len(list(locks_folder.glob('*')))
     print(("\n====================================================\n"
-         + "[{}] encodage n°2 (final) de {} terminé.\n"
+         + "[{}] encodage n°2 (final)  de {} terminé.\n"
          + "====================================================\n")\
            .format(datetime.datetime.now().strftime("%H:%M:%S"),
                    folder_to_encode))
