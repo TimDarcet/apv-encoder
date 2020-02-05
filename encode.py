@@ -61,8 +61,7 @@ def encode(folder_to_encode, target_size, computers_file):
     locks_folder.mkdir(exist_ok=True)
     for video in folder_to_encode.rglob('*.mp4'):
         # Create parent folders
-        out_folder = output_1_folde
-lr / video.parent.relative_to(folder_to_encode)
+        out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
         out_folder.mkdir(exist_ok=True, parents=True)
         # Get a computer
         cmp = computers[cmpidx % len(computers)]
@@ -129,7 +128,7 @@ lr / video.parent.relative_to(folder_to_encode)
     print("[{}] Lecture des tailles de fichiers"\
           .format(datetime.datetime.now().strftime("%H:%M:%S")))
     sum_sizes = 0
-    for video in sorted(folder_to_encode.rglob('*.mp4')):
+    for video in len(folder_to_encode.rglob('*.mp4')):
         print("[{}] lecture de {}"\
             .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
         out_file = output_1_folder / video.relative_to(folder_to_encode)
