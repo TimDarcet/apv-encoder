@@ -193,7 +193,7 @@ def encode(folder_to_encode, target_size, computers_file):
             out_1_file
         ], stdout=subprocess.PIPE, stderr=sys.stderr)
         c_bitrate = int(c_bitrate_cmd_out.stdout)
-        nice_bitrate = target_size * c_bitrate / sum_sizes - AUDIO_BITRATE
+        nice_bitrate = target_size * c_bitrate * coef / sum_sizes - AUDIO_BITRATE
         # Launch actual encoding
         cmd_output = subprocess.Popen([
             "ssh",
