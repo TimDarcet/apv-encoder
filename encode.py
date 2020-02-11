@@ -70,6 +70,7 @@ def encode(folder_to_encode, target_size, computers_file):
         out_file = out_folder / video.name
         if not out_file.is_file():
             # Launch actual encoding
+            lock_name = str(video.name) + '@' +  cmp.split('@')[-1]
             cmd_output = subprocess.Popen([
                 "ssh",
                 "-oStrictHostKeyChecking=no",
@@ -81,7 +82,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 && rm -f {lockfile}"\
                 .format(
                     cwd=Path.cwd().as_posix(),
-                    lockfile=(Path("./locks") / cmp.split('@')[-1]).as_posix(),
+                    lockfile=(Path("./locks") / lock_name).as_posix(),
                     ffmpeg=FFMPEG,
                     invid=video.as_posix(),
                     quality=PASS_1_QUALITY,
@@ -195,6 +196,7 @@ def encode(folder_to_encode, target_size, computers_file):
         c_bitrate = int(c_bitrate_cmd_out.stdout)
         nice_bitrate = target_size * c_bitrate * coef / sum_sizes - AUDIO_BITRATE
         # Launch actual encoding
+        lock_name = str(video.name) + '@' +  cmp.split('@')[-1]
         cmd_output = subprocess.Popen([
             "ssh",
             "-oStrictHostKeyChecking=no",
@@ -205,7 +207,7 @@ def encode(folder_to_encode, target_size, computers_file):
             && rm -f {lockfile}"\
             .format(
                 cwd=Path.cwd().as_posix(),
-                lockfile=(Path("./locks") / cmp.split('@')[-1]).as_posix(),
+                lockfile=(Path("./locks") / lock_name).as_posix(),
                 invid=video.as_posix(),
                 outvid=(out_folder / video.name).as_posix(),
                 v_bitrate=nice_bitrate,
