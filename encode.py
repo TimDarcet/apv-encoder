@@ -155,7 +155,7 @@ def encode(folder_to_encode, target_size, computers_file):
             "format=size",
             "-of",
             "default=noprint_wrappers=1:nokey=1",
-            out_file.as_posix()
+            str(out_file.as_posix())
         ], stdout=subprocess.PIPE, stderr=sys.stderr)
         sum_sizes += coef * int(cmd_out.stdout)
     
@@ -191,7 +191,7 @@ def encode(folder_to_encode, target_size, computers_file):
             "format=bit_rate",
             "-of",
             "default=noprint_wrappers=1:nokey=1",
-            out_1_file
+            str(out_1_file.as_posix())
         ], stdout=subprocess.PIPE, stderr=sys.stderr)
         c_bitrate = int(c_bitrate_cmd_out.stdout)
         nice_bitrate = target_size * c_bitrate * coef / sum_sizes - AUDIO_BITRATE
