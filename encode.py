@@ -148,7 +148,7 @@ def encode(folder_to_encode, target_size, computers_file):
             raise FileNotFoundError("Could not find output of first encoding for {}. Path searched: {}"\
                              .format(video, out_file))
         cmd_out = subprocess.run([
-            FFPROBE,
+            str(FFPROBE),
             "-v",
             "error",
             "-show_entries",
@@ -184,7 +184,7 @@ def encode(folder_to_encode, target_size, computers_file):
         coef = int(coefpath.read_text().strip())
         # Calculate bitrate
         c_bitrate_cmd_out = subprocess.run([
-            FFPROBE,
+            str(FFPROBE),
             "-v",
             "error",
             "-show_entries",
