@@ -101,7 +101,7 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
     while current_encodings + nb_videos_to_encode - index_next_video_to_encode > 0:
         if index_next_video_to_encode < nb_videos_to_encode:
             for cmp in computers:
-                if getNbLocksOfComputer(cmp, locks_folder) < max_threads and index_next_video_to_encode < nb_videos_to_encode:
+                if (getNbLocksOfComputer(cmp, locks_folder) < max_threads or max_threads == 0) and index_next_video_to_encode < nb_videos_to_encode:
                     video = videos_to_encode[index_next_video_to_encode]
                     # Create parent folders
                     out_folder = output_1_folder / video.parent.relative_to(folder_to_encode)
