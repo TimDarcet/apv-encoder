@@ -6,6 +6,7 @@ import subprocess
 import datetime
 from time import sleep
 import sys
+from memoization import cached
 
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
@@ -57,12 +58,18 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
         containing a single integer.
     There should be programs (or links to ones) named ffmpeg and ffprobe in the cwd.
     """
-    ##### Encoding number 1 #####
+
     folder_to_encode = Path(folder_to_encode).resolve()
     target_size *= 10 ** 6
     # Read computer list
     computers = list(map(str.strip, computers_file.readlines()))
     cmpidx = 0
+
+    ##### Initial checks #####
+    for video in folder_to_encode.rglob("*.mp4")
+        getVideoCoeff(video) #raise an error if coef does not exist
+
+    ##### Encoding number 1 #####
     # Make folders
     output_1_folder = folder_to_encode.parent / 'constant_quality_output'
     output_1_folder.mkdir(exist_ok=True)
@@ -143,15 +150,7 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
             .format(datetime.datetime.now().strftime("%H:%M:%S"), video))
         out_file = output_1_folder / video.relative_to(folder_to_encode)
         # Read coef
-        coefpath = video.parent / '.coef'
-        i = 0
-        while not coefpath.is_file():
-            coefpath = coefpath.parent.parent / '.coef'
-            i += 1
-            if i > 100:
-                raise FileNotFoundError("Could not find .coef file for {}."\
-                    .format(video))
-        coef = int(coefpath.read_text().strip())
+        coef = getVideoCoeff(video)
         # Check if the encoding 1 worked
         if (not out_file.is_file()):
             raise FileNotFoundError("Could not find output of first encoding for {}. Path searched: {}"\
@@ -187,10 +186,7 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
         cmp = computers[cmpidx % len(computers)]
         cmpidx += 1
         # Read coef
-        coefpath = video.parent / '.coef'
-        while not coefpath.is_file():
-            coefpath = coefpath.parent.parent / '.coef'
-        coef = int(coefpath.read_text().strip())
+        coef = getVideoCoeff(video)
         # Calculate bitrate
         c_bitrate_cmd_out = subprocess.run([
             ffprobe_path,
@@ -255,6 +251,18 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
     # Clean
     locks_folder.rmdir()
 
+@cached
+def getVideoCoeff(video):
+    # Read coef
+    coefpath = video.parent / '.coef'
+    i = 0
+    while not coefpath.is_file():
+        coefpath = coefpath.parent.parent / '.coef'
+        i += 1
+        if i > 100:
+            raise FileNotFoundError("Could not find .coef file for {}."\
+                .format(video))
+    coef = int(coefpath.read_text().strip())
 
 if __name__ == '__main__':
     encode()
