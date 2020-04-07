@@ -7,9 +7,6 @@ import datetime
 from time import sleep
 import sys
 
-
-FFMPEG = Path("ffmpeg").resolve()
-FFPROBE = Path("ffprobe").resolve()
 PASS_1_QUALITY = 28
 AUDIO_BITRATE = 192 * 10 ** 3
 
@@ -39,7 +36,19 @@ AUDIO_BITRATE = 192 * 10 ** 3
     default="~/computers_name",
     help="A file containing the ssh connection addresses of the other computers to distribute on"
 )
-def encode(folder_to_encode, target_size, computers_file):
+@click.option(
+    '-m',
+    "--ffmpeg-path",
+    default="ffmpeg",
+    help="FFMPEG path. Default : ${whereis ffmpeg}"
+)
+@click.option(
+    '-p',
+    "--ffprobe-path",
+    default="ffprobe",
+    help="FFPROBE path. Default : ${whereis ffprobe}"
+)
+def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_path):
     """
     Encodes the folder down to the target size
     Distributes the calculation to computers through ssh
@@ -83,7 +92,7 @@ def encode(folder_to_encode, target_size, computers_file):
                 .format(
                     cwd=Path.cwd().as_posix(),
                     lockfile=(Path("./locks") / lock_name).as_posix(),
-                    ffmpeg=FFMPEG,
+                    ffmpeg=ffmpeg_path,
                     invid=video.as_posix(),
                     quality=PASS_1_QUALITY,
                     outvid=out_file.as_posix()
@@ -148,7 +157,7 @@ def encode(folder_to_encode, target_size, computers_file):
             raise FileNotFoundError("Could not find output of first encoding for {}. Path searched: {}"\
                              .format(video, out_file))
         cmd_out = subprocess.run([
-            str(FFPROBE),
+            ffprobe_path,
             "-v",
             "error",
             "-show_entries",
@@ -158,9 +167,9 @@ def encode(folder_to_encode, target_size, computers_file):
             str(out_file.as_posix())
         ], stdout=subprocess.PIPE, stderr=sys.stderr)
         sum_sizes += coef * int(cmd_out.stdout)
-    
+
     print("[{}] Encodage n°2"\
-          .format(datetime.datetime.now().strftime("%H:%M:%S"))) 
+          .format(datetime.datetime.now().strftime("%H:%M:%S")))
     ##### Do encoding 2 (two-pass actual encoding) #####
     # Make folders
     output_2_folder = folder_to_encode.parent / 'encoding_final_output'
@@ -184,7 +193,7 @@ def encode(folder_to_encode, target_size, computers_file):
         coef = int(coefpath.read_text().strip())
         # Calculate bitrate
         c_bitrate_cmd_out = subprocess.run([
-            str(FFPROBE),
+            ffprobe_path,
             "-v",
             "error",
             "-show_entries",
@@ -203,7 +212,7 @@ def encode(folder_to_encode, target_size, computers_file):
             cmp,
             "cd \"{cwd}\" \
             && touch \"{lockfile}\" \
-            && ./two_pass_one_file.sh \"{invid}\" \"{outvid}\" {v_bitrate} {a_bitrate}\
+            && ./two_pass_one_file.sh \"{invid}\" \"{outvid}\" {v_bitrate} {a_bitrate} \"{ffmpeg}\" \"{ffprobe}\" \
             && rm -f \"{lockfile}\""\
             .format(
                 cwd=Path.cwd().as_posix(),
@@ -211,7 +220,9 @@ def encode(folder_to_encode, target_size, computers_file):
                 invid=video.as_posix(),
                 outvid=(out_folder / video.name).as_posix(),
                 v_bitrate=nice_bitrate,
-                a_bitrate=AUDIO_BITRATE
+                a_bitrate=AUDIO_BITRATE,
+                ffmpeg=ffmpeg_path,
+                ffprobe=ffprobe_path
             )
         ],
         # stdout=sys.stdout, stderr=sys.stderr)
@@ -219,7 +230,7 @@ def encode(folder_to_encode, target_size, computers_file):
         stdout=subprocess.PIPE, stderr=sys.stderr)
         print("[{}] encodage n°2 de {} lancé sur {}."\
               .format(datetime.datetime.now().strftime("%H:%M:%S"), video, cmp))
-    
+
     # Wait for encodings 2 to end
     sleep(2)
     n_remaining = len(list(locks_folder.glob('*')))
