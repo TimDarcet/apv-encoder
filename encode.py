@@ -62,8 +62,7 @@ def encode(folder_to_encode, target_size, computers_file, ffmpeg_path, ffprobe_p
     Distributes the calculation to computers through ssh
     In order to be encoded using a coefficient, \
         files should be placed in folders containing a file named '.coef' and \
-        containing a single integer.
-    There should be programs (or links to ones) named ffmpeg and ffprobe in the cwd.
+        containing a single integer (see README).
     """
 
     ##### Read input #####
